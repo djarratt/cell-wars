@@ -59,6 +59,8 @@ crowded,C60,insane,7,15
 solo,C80,normal,2,2
 pairs,C80,normal,2,2
 crowded,C80,normal,2,2
+solo,C80,hard,2,2
+pairs,C80,hard,2,2
 solo,C80,insane,9,15
 pairs,C80,insane,9,15
 crowded,C80,insane,7,15
