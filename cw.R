@@ -21,11 +21,13 @@ cw = read.csv("~/Documents/cw/cw_marginal.csv") %>%
          startingPct = startingNum / numCells * 100
 )
 
-fit = glm(data=cw
-          , formula = cbind(positive.2,negative.2) ~ 
-            (numCells * difficulty)
-            #+ startingNum + startingPct
-          , family = binomial())
+WITH.INTERACTIONS = FALSE
+
+formula = ifelse(WITH.INTERACTIONS, 
+                 'cbind(positive.2,negative.2) ~ numCells * difficulty',
+                 'cbind(positive.2,negative.2) ~ numCells + difficulty')
+
+fit = glm(data = cw, formula = as.formula(formula), family = binomial())
 
 summary(fit) # display results
 confint(fit) # 95% CI for the coefficients
@@ -67,6 +69,7 @@ to.plot = within(to.plot, {
   UL <- plogis(fit + (1.64 * se.fit))
 })
 
+plot.save.prefix = ifelse(WITH.INTERACTIONS, 'with-interactions-', 'no-interactions-')
 
 ggplot(data=to.plot, aes(x = numCells, y = PredictedProb)) + 
   geom_ribbon(aes(ymin = LL, ymax = UL, fill = difficulty), alpha = .2) +
@@ -77,7 +80,7 @@ ggplot(data=to.plot, aes(x = numCells, y = PredictedProb)) +
   labs(title = "Chance of victory as a function of map parameters",
        x = "Number of cells", y = "Chance of victory") +
   geom_point(data=marginals, aes(y=marginalRate, x=numCells, color = difficulty, size = gamesPlayed)) +
-  ggsave(file="plot.png", width=7, height = 7)
+  ggsave(file=paste(plot.save.prefix,"plot.png",sep = ''), width=7, height = 7)
 
 # total.nodes = cw$numCells * 15
 # completed.nodes = ifelse(cw$N > 15, 15, cw$N) * cw$numCells
