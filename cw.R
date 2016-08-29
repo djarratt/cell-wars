@@ -50,17 +50,37 @@ marginals = cw %>%
   select(-positive,-N) %>%
   slice(1)
 
+marginals.beta = marginals %>%
+  select(-marginalRate) %>%
+  merge(seq(from=0, to=1, by=0.01), by=NULL) %>%
+  mutate(B = (gamesPlayed - sumPositive)) %>%
+  select(-gamesPlayed) %>%
+  rename(x = y, A = sumPositive) %>%
+  mutate(beta.y = dbeta(x, A+1, B+1)) %>%
+  group_by(numCells, difficulty) %>%
+  mutate(
+    max.y = max(beta.y),
+    y = beta.y / max.y
+  ) %>%
+  ungroup()
+
+ggplot(data=marginals.beta, aes(x=x,y=y,color=difficulty)) + 
+  coord_flip() + 
+  geom_line() + 
+  facet_grid(~ numCells) +
+  scale_y_discrete(breaks = NULL) +
+  labs(title = "Likelihood of past win percentages, by map size",
+       y = "Likelihood of this win percentage occurring", x = "Win percentage") +
+  ggsave(file="win-percentage-likelihoods.png", width = 12, height = 8)
+
 to.plot.from = 10
 to.plot.to = 100
 
 to.plot = expand.grid(numCells = seq(from=to.plot.from,to=to.plot.to), startingMode = c("1", "2", "3"), difficulty = c("normal","hard","insane"))
 to.plot$startingNum = as.numeric(to.plot$startingMode)
 to.plot$startingNum = ifelse(to.plot$startingNum==3 | (to.plot$startingNum==2 & to.plot$numCells < 10), to.plot$numCells / 5, to.plot$startingNum)
-# to.plot$startingMode = ifelse(to.plot$startingMode=="1","Solo",ifelse(to.plot$startingMode=="2","Pairs","Crowded"))
-# to.plot$startingPct = to.plot$startingNum / to.plot$numCells
 
 levels(to.plot$difficulty) = c("normal","hard","insane")
-# levels(to.plot$startingMode) = c("Solo","Pairs","Crowded")
 to.plot = cbind(to.plot, predict(fit,newdata = to.plot, type = "link",se=TRUE))
 
 to.plot = within(to.plot, {
@@ -73,7 +93,6 @@ plot.save.prefix = ifelse(WITH.INTERACTIONS, 'with-interactions-', 'no-interacti
 
 ggplot(data=to.plot, aes(x = numCells, y = PredictedProb)) + 
   geom_ribbon(aes(ymin = LL, ymax = UL, fill = difficulty), alpha = .2) +
-  # geom_line(aes(color=difficulty,linetype=startingMode),numCells=1) + 
   geom_line(aes(color=difficulty),size=1) + 
   scale_y_continuous(breaks=seq(from=0,to=1,by=0.1),minor_breaks = waiver()) +
   scale_x_continuous(breaks=seq(from=to.plot.from,to=to.plot.to,by=10),minor_breaks = waiver()) +
@@ -81,9 +100,3 @@ ggplot(data=to.plot, aes(x = numCells, y = PredictedProb)) +
        x = "Number of cells", y = "Chance of victory") +
   geom_point(data=marginals, aes(y=marginalRate, x=numCells, color = difficulty, size = gamesPlayed)) +
   ggsave(file=paste(plot.save.prefix,"plot.png",sep = ''), width=7, height = 7)
-
-# total.nodes = cw$numCells * 15
-# completed.nodes = ifelse(cw$N > 15, 15, cw$N) * cw$numCells
-# uncompleted.nodes = total.nodes - completed.nodes
-# print("Percent of nodes unobserved: ")
-# print(sum(uncompleted.nodes) / sum(total.nodes))
