@@ -65,6 +65,7 @@ crowded,C80,hard,2,2
 solo,C80,insane,9,15
 pairs,C80,insane,9,15
 crowded,C80,insane,7,15
+solo,XXL,normal,1,1
 solo,XXL,hard,1,3
 pairs,XXL,hard,2,3
 crowded,XXL,hard,3,3
