@@ -56,7 +56,7 @@ marginals.beta = marginals %>%
 ggplot(data=marginals.beta, aes(x=x,y=y,color=difficulty)) + 
   coord_flip() + 
   geom_line() + 
-  ggthemes::theme_tufte() +
+  ggthemes::theme_economist() +
   facet_grid(~ numCells) +
   scale_y_discrete(breaks = NULL) +
   labs(title = "Likelihood of past win percentages, by map size",
@@ -100,6 +100,6 @@ for(WITH.INTERACTIONS in c(FALSE,TRUE)) {
     labs(title = "Win probability as a function of map parameters",
          x = "Number of map cells", y = "Win percentage\nDots represent actual games — lines are predicted") +
     geom_point(data=marginals, aes(y=marginalRate, x=numCells, color = difficulty, size = actualGamesPlayed)) +
-    ggthemes::theme_tufte() +
+    ggthemes::theme_economist() +
     ggsave(file=paste(plot.save.prefix,"plot.png",sep = ''), width=12, height = 8)
 }
