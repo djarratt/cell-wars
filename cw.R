@@ -5,22 +5,30 @@ require(ggthemes)
 
 cw = read.csv("~/Documents/cw/cw_marginal.csv") %>% 
   filter(difficulty != 'easy') %>%
-  mutate(difficulty = factor(difficulty, levels = c("normal","hard","insane")),
-         numCells = ifelse(size=='S',10,
-                ifelse(size=='M',15,
-                ifelse(size=='L',25,
-                ifelse(size=='XL',40,
-                ifelse(size=='C60',60,
-                ifelse(size=='C80',80,100)))))),
-         N.2 = N + 2,
-         positive.2 = positive + 1,
-         negative.2 = N.2 - positive.2,
-         negative = N - positive,
-         actual = positive / (positive + negative),
-         actual.2 = positive.2 / (positive.2 + negative.2),
-         startingNum = ifelse(starting=='solo',1,ifelse(starting=='pairs',2,numCells / 5)),
-         startingPct = startingNum / numCells * 100
-)
+  mutate(
+    difficulty = factor(difficulty, levels = c("normal","hard","insane")),
+    size = factor(size, levels = c('S','M','L','XL','C60','C70','C80','XXL'))
+  ) %>%
+  group_by(starting, size, difficulty) %>%
+  mutate(
+    positive = sum(positive),
+    N = sum(N),
+    numCells = ifelse(size=='S', 10,
+          ifelse(size=='M', 15,
+          ifelse(size=='L', 25,
+          ifelse(size=='XL', 40,
+          ifelse(size=='C60', 60,
+          ifelse(size=='C70', 70,
+          ifelse(size=='C80', 80, 100))))))),
+    N.2 = N + 2,
+    positive.2 = positive + 1,
+    negative.2 = N.2 - positive.2,
+    negative = N - positive,
+    actual = positive / (positive + negative),
+    actual.2 = positive.2 / (positive.2 + negative.2)
+  ) %>%
+  select(-player) %>%
+  slice(1)
 
 marginals = cw %>%
   select(

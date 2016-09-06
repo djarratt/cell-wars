@@ -47,9 +47,9 @@ player,starting,size,difficulty,positive,N
 1,solo,XL,insane,12,15
 1,pairs,XL,insane,9,15
 1,crowded,XL,insane,10,15
-1,solo,C60,normal,4,4
-1,pairs,C60,normal,2,3
-1,crowded,C60,normal,3,3
+1,solo,C60,normal,7,7
+1,pairs,C60,normal,3,4
+1,crowded,C60,normal,4,4
 1,solo,C60,hard,6,7
 1,pairs,C60,hard,2,4
 1,crowded,C60,hard,4,4
@@ -59,9 +59,9 @@ player,starting,size,difficulty,positive,N
 1,solo,C80,normal,2,2
 1,pairs,C80,normal,2,2
 1,crowded,C80,normal,2,2
-1,solo,C80,hard,2,2
-1,pairs,C80,hard,2,2
-1,crowded,C80,hard,2,2
+1,solo,C80,hard,4,4
+1,pairs,C80,hard,3,4
+1,crowded,C80,hard,3,4
 1,solo,C80,insane,9,15
 1,pairs,C80,insane,9,15
 1,crowded,C80,insane,7,15
